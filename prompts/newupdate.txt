@@ -1,0 +1,210 @@
+# Admin Authentication Redirect System
+
+## Goal
+
+Create a clean authentication routing system for an admin panel where accessing `/admin` checks authentication and redirects appropriately.
+
+The admin dashboard must open only after successful login.
+
+---
+
+# 1. Admin Route Entry
+
+When a user visits:
+
+```
+/admin
+```
+
+The system must check if the admin is authenticated.
+
+---
+
+# 2. If Admin is NOT Logged In
+
+If the user is not authenticated:
+
+Redirect to:
+
+```
+/login
+```
+
+Expected flow:
+
+```
+User enters → /admin
+System redirects → /login
+Login page appears
+```
+
+The login page must contain:
+
+* Email field
+* Password field
+* Login button
+
+---
+
+# 3. After Successful Login
+
+When login is successful:
+
+Redirect the user to:
+
+```
+/admin
+```
+
+The admin dashboard should load.
+
+Expected result:
+
+```
+/admin → Admin Dashboard
+```
+
+---
+
+# 4. If Admin is Already Logged In
+
+If the admin session already exists and the user visits:
+
+```
+/admin
+```
+
+The system should:
+
+* Allow access
+* Load the admin dashboard directly
+
+Do NOT redirect to login.
+
+---
+
+# 5. Refresh Behavior
+
+If the admin refreshes the page while inside `/admin`:
+
+The system must check the authentication state.
+
+If the session is valid:
+
+```
+Stay on /admin
+```
+
+Do not redirect to login.
+
+---
+
+# 6. Unauthorized Access Protection
+
+If someone tries to access `/admin` without authentication:
+
+Automatically redirect to:
+
+```
+/login
+```
+
+---
+
+# 7. URL Behavior Summary
+
+Correct behavior:
+
+```
+User types → /admin
+Not logged in → /login
+Login success → /admin
+Dashboard opens
+```
+
+---
+
+# 8. Clean URL Rules
+
+Allowed URLs:
+
+```
+/login
+/admin
+```
+
+Not allowed:
+
+```
+/admin#/admin
+/admin#/login
+```
+
+Hash routing must not be used.
+
+---
+
+# 9. Example Folder Structure
+
+Example project structure:
+
+```
+app
+ ├ admin
+ │   └ page.tsx
+ │
+ ├ login
+ │   └ page.tsx
+ │
+ └ page.tsx
+```
+
+Route behavior:
+
+```
+/login → Admin login page
+/admin → Admin dashboard
+```
+
+---
+
+# 10. Logout Behavior
+
+When the admin clicks logout:
+
+* Destroy authentication session
+* Redirect to:
+
+```
+/login
+```
+
+---
+
+# Final Expected Result
+
+✔ `/admin` checks authentication
+✔ Not logged in → `/login`
+✔ Login success → `/admin`
+✔ `/admin` loads admin dashboard
+✔ Refresh keeps admin logged in
+✔ Clean URLs without hash routing
+
+---
+
+# Recommended Technology
+
+Next.js
+Firebase Authentication
+Route protection
+Persistent login session
+
+---
+
+# Deliverables
+
+1. Admin login page
+2. Authentication check
+3. Redirect system
+4. Admin dashboard
+5. Persistent login

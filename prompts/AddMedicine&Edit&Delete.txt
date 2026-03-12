@@ -1,0 +1,302 @@
+# RapidRelief Store Inventory System – Full Backend Integration
+
+## Objective
+
+Implement a fully functional **Store Inventory Management System** for the RapidRelief Store Panel.
+
+The inventory page UI already exists. Now activate all features so the system becomes fully dynamic and connected to the backend database.
+
+All inventory actions must update automatically in the backend and refresh the UI in real time.
+
+---
+
+# 1. Inventory Page Route
+
+Inventory page:
+
+```
+/store/inventory
+```
+
+This page should display all medicines available in the store.
+
+---
+
+# 2. Inventory Table
+
+Each row should contain:
+
+```
+Medicine Image
+Product Name
+Category
+Price
+Stock Status
+Actions
+```
+
+Example medicines:
+
+```
+Paracetamol 650mg
+Cough Syrup Advanced
+Digital Thermometer
+Amoxicillin 500mg
+Bandage Roll
+Vitamin C Serum
+Baby Diapers
+```
+
+Stock status indicator:
+
+```
+In Stock (Green)
+Low Stock (Yellow)
+Out of Stock (Red)
+```
+
+---
+
+# 3. Add New Medicine Button
+
+The **Add New Medicine** button must open a modal form.
+
+Button:
+
+```
++ Add New Medicine
+```
+
+Modal fields:
+
+```
+Medicine Name
+Category
+Price
+Stock Quantity
+Medicine Image Upload
+Description
+Prescription Required (Yes/No)
+Expiry Date
+Manufacturer
+```
+
+After clicking **Save**:
+
+1. Data must be stored in the backend database.
+2. Inventory table must update automatically.
+3. Modal must close.
+
+---
+
+# 4. Edit Medicine
+
+Each row contains an edit icon.
+
+```
+✏ Edit
+```
+
+Clicking edit should:
+
+1. Open an **Edit Medicine Modal**
+2. Pre-fill all existing data.
+
+Editable fields:
+
+```
+Medicine Name
+Category
+Price
+Stock Quantity
+Image
+Description
+Expiry Date
+Prescription Required
+```
+
+After saving:
+
+```
+Database updates
+Inventory table refreshes
+```
+
+---
+
+# 5. Delete Medicine
+
+Each row contains a delete icon.
+
+```
+🗑 Delete
+```
+
+Clicking delete should:
+
+1. Show confirmation popup.
+
+Example message:
+
+```
+Are you sure you want to delete this medicine?
+```
+
+Buttons:
+
+```
+Cancel
+Delete
+```
+
+After delete:
+
+```
+Medicine removed from database
+Inventory UI updates automatically
+```
+
+---
+
+# 6. Search Inventory
+
+Search bar must allow searching by:
+
+```
+Medicine Name
+Category
+Manufacturer
+```
+
+Search results should update instantly.
+
+---
+
+# 7. Backend Database Structure
+
+Example database collection:
+
+```
+medicines
+```
+
+Fields:
+
+```
+id
+name
+category
+price
+stock
+image
+description
+expiryDate
+manufacturer
+prescriptionRequired
+createdAt
+```
+
+---
+
+# 8. Real-Time Inventory Updates
+
+When inventory changes:
+
+```
+Add Medicine
+Edit Medicine
+Delete Medicine
+Stock Update
+```
+
+The UI must update instantly without refreshing the page.
+
+Use real-time database updates.
+
+---
+
+# 9. Low Stock Alert System
+
+If stock quantity is below threshold:
+
+```
+Stock < 10
+```
+
+Display:
+
+```
+Low Stock Warning
+```
+
+Also send notification in the store panel.
+
+---
+
+# 10. UI Design Requirements
+
+Interface must be modern and consistent with the RapidRelief Store Dashboard.
+
+Features required:
+
+```
+Responsive layout
+Clean data tables
+Smooth modal animations
+Dark mode support
+Light mode support
+Professional buttons
+```
+
+---
+
+# 11. Technology Stack
+
+Recommended stack:
+
+```
+Next.js
+Firebase Firestore
+Firebase Storage (for images)
+Tailwind CSS
+React Hooks
+```
+
+---
+
+# 12. Folder Structure Example
+
+```
+app
+ ├ store
+ │   ├ inventory
+ │   │   ├ page.tsx
+ │   │   ├ AddMedicineModal.tsx
+ │   │   ├ EditMedicineModal.tsx
+ │   │   └ MedicineTable.tsx
+```
+
+---
+
+# 13. Expected Result
+
+Final system must support:
+
+```
+Add Medicine
+Edit Medicine
+Delete Medicine
+Search Inventory
+Stock Alerts
+Image Upload
+Real-time updates
+```
+
+All features must be fully functional with backend integration.
+
+---
+
+# Deliverables
+
+1. Dynamic inventory system
+2. Add/Edit/Delete medi

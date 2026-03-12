@@ -1,0 +1,224 @@
+# RapidRelief Login System Update (Admin + Store)
+
+## Objective
+
+Update the existing RapidRelief authentication UI to support **two login portals**:
+
+1. Admin Login
+2. Store Login
+
+The Admin login page already exists and must be updated to include a **Store login option**.
+
+---
+
+# 1. Update Role Switch
+
+Current login page contains a role switch:
+
+```
+User | Admin
+```
+
+Update this to:
+
+```
+User | Store
+```
+
+The **Admin option must be replaced with Store**.
+
+New role selector:
+
+```
+User | Store
+```
+
+---
+
+# 2. Store Login Page Route
+
+Create a new route for Store login.
+
+Direct URL access:
+
+```
+/store
+```
+
+When visiting `/store`, the **Store Login Page must open directly**.
+
+---
+
+# 3. Store Login Page Design
+
+The Store login page must follow the same design as the Admin login page.
+
+### Top Section
+
+RapidRelief Logo
+
+Under the logo show:
+
+```
+RapidRelief
+```
+
+Then display:
+
+```
+Welcome Back
+```
+
+Subtitle:
+
+```
+Sign in to access the store dashboard
+```
+
+---
+
+# 4. Store Login Form
+
+Fields required:
+
+Store Email
+Password
+
+Password field must include:
+
+* show / hide password toggle
+
+---
+
+# 5. Store Login Button
+
+Replace admin button text with:
+
+```
+Store Login
+```
+
+---
+
+# 6. Security Text
+
+Below the login button display:
+
+```
+Secure Store Portal Access Only.
+```
+
+---
+
+# 7. Store Login Redirect
+
+After successful login redirect to:
+
+```
+/store/dashboard
+```
+
+---
+
+# 8. Authentication Protection
+
+If an unauthenticated user tries to access:
+
+```
+/store/dashboard
+```
+
+Redirect to:
+
+```
+/store
+```
+
+---
+
+# 9. UI Consistency
+
+Both login pages must share the same design:
+
+Admin Login UI
+Store Login UI
+
+Features required:
+
+* Dark Mode
+* Light Mode
+* RapidRelief branding
+* Centered login card
+* Responsive design
+
+---
+
+# 10. Clean URL Rules
+
+Correct URLs:
+
+```
+/admin
+/store
+/admin/dashboard
+/store/dashboard
+```
+
+Incorrect URLs:
+
+```
+/admin#/login
+/store#/login
+```
+
+Hash routing must not be used.
+
+---
+
+# 11. Folder Structure
+
+Example structure:
+
+```
+app
+ ├ admin
+ │   ├ page.tsx
+ │   └ dashboard
+ │
+ ├ store
+ │   ├ page.tsx
+ │   └ dashboard
+ │
+ └ page.tsx
+```
+
+---
+
+# Final Expected Result
+
+✔ `/admin` → Admin login page
+✔ `/store` → Store login page
+✔ Login selector shows **User | Store**
+✔ RapidRelief branding
+✔ Store login button
+✔ Store dashboard after login
+✔ Secure authentication protection
+
+---
+
+# Recommended Stack
+
+Next.js
+Firebase Authentication
+Route protection
+Session persistence
+
+---
+
+# Deliverables
+
+1. Updated login selector (User | Store)
+2. Store login page
+3. Store dashboard route
+4. Secure authentication
+5. RapidRelief branded UI

@@ -1,0 +1,291 @@
+# RapidRelief Admin Login System
+
+## Objective
+
+Create a professional admin login system for the RapidRelief platform.
+
+When a user enters `/admin` in the browser URL, the system must open the **Admin Login Page** directly.
+
+The login page should follow a clean, modern admin UI design with support for **Light Mode and Dark Mode**.
+
+---
+
+# 1. Admin Entry URL
+
+When a user visits:
+
+```
+/admin
+```
+
+The system must:
+
+1. Check authentication state.
+2. If the admin is not logged in → open the Admin Login Page.
+
+Expected behavior:
+
+```
+/admin → Admin Login Page
+```
+
+The URL should remain:
+
+```
+/admin
+```
+
+---
+
+# 2. Login Page UI
+
+Design a modern admin login page similar to a professional SaaS admin portal.
+
+### Layout
+
+Center card login layout.
+
+Elements required:
+
+* Admin logo
+* Platform name
+* Welcome message
+* Email field
+* Password field
+* Login button
+
+---
+
+# 3. Logo and Branding
+
+Do NOT use the Frext logo.
+
+Instead use the **RapidRelief logo**.
+
+Logo placement:
+
+Top center of login card.
+
+Under the logo display the platform name:
+
+```
+RapidRelief
+```
+
+Example structure:
+
+```
+[ RapidRelief Logo ]
+
+RapidRelief
+Welcome Back
+
+Sign in to access the admin dashboard
+```
+
+---
+
+# 4. Login Form Fields
+
+Required fields:
+
+Email
+
+Password
+
+Password field should include:
+
+* Show / Hide password toggle icon
+
+Login button text:
+
+```
+Admin Login
+```
+
+---
+
+# 5. Additional UI Text
+
+Under the login button show:
+
+```
+Secure Admin Portal Access Only. IP Logged.
+```
+
+---
+
+# 6. Dark Mode and Light Mode
+
+The login page must support:
+
+Light Mode
+
+Dark Mode
+
+Example behavior:
+
+Light Mode:
+
+* White background
+* Soft shadows
+* Light card UI
+
+Dark Mode:
+
+* Dark background
+* Dark card
+* Light text
+
+Theme toggle icon should appear in the top corner.
+
+---
+
+# 7. Authentication Flow
+
+Admin login behavior:
+
+User enters:
+
+```
+/admin
+```
+
+If not logged in:
+
+Show login page.
+
+After successful login:
+
+Redirect to:
+
+```
+/admin/dashboard
+```
+
+---
+
+# 8. Admin Dashboard
+
+Dashboard URL:
+
+```
+/admin/dashboard
+```
+
+The admin dashboard should contain:
+
+* Sidebar navigation
+* Orders
+* Inventory
+* Users
+* Settings
+* Revenue stats
+* Recent orders table
+
+---
+
+# 9. Refresh Behavior
+
+If admin refreshes the browser while inside `/admin/dashboard`:
+
+Admin should remain logged in.
+
+Do NOT redirect to login.
+
+Use persistent authentication.
+
+---
+
+# 10. Unauthorized Access
+
+If an unauthenticated user tries to access:
+
+```
+/admin/dashboard
+/admin/orders
+/admin/users
+```
+
+Automatically redirect to:
+
+```
+/admin
+```
+
+---
+
+# 11. Clean URL Rules
+
+Correct URLs:
+
+```
+/admin
+/admin/dashboard
+/admin/orders
+```
+
+Incorrect URLs:
+
+```
+/admin#/admin
+/admin#/login
+```
+
+Hash routing must not be used.
+
+---
+
+# 12. Folder Structure Example
+
+Example project structure:
+
+```
+app
+ ├ admin
+ │   ├ page.tsx
+ │   ├ dashboard
+ │   │   └ page.tsx
+ │   ├ orders
+ │   ├ users
+ │   └ settings
+ │
+ └ page.tsx
+```
+
+Route behavior:
+
+```
+/admin → Login Page
+/admin/dashboard → Admin Dashboard
+```
+
+---
+
+# Final Expected Result
+
+✔ `/admin` opens RapidRelief admin login page
+✔ Login page shows RapidRelief logo and title
+✔ Dark mode and light mode supported
+✔ Successful login → `/admin/dashboard`
+✔ Refresh keeps admin logged in
+✔ Secure admin-only access
+
+---
+
+# Recommended Tech Stack
+
+Next.js
+Firebase Authentication
+Secure session persistence
+Protected admin routes
+
+---
+
+# Deliverables
+
+1. RapidRelief Admin Login Page
+2. Authentication system
+3. Admin dashboard routing
+4. Dark mode / Light mode UI
+5. Protected admin panel

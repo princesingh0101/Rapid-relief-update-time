@@ -1,0 +1,357 @@
+# RapidRelief Store Panel – Full Feature Activation
+
+## Objective
+
+Upgrade the existing **RapidRelief Store Panel** to make all sidebar pages fully functional with complete interfaces and operational features.
+
+The store dashboard UI is already built. Now implement the backend logic and activate all features.
+
+---
+
+# 1. Store Panel Route
+
+Main dashboard route:
+
+```
+/store/dashboard
+```
+
+Unauthorized users must be redirected to:
+
+```
+/store
+```
+
+---
+
+# 2. Sidebar Navigation Activation
+
+All sidebar menu items must be active and linked to working pages.
+
+Sidebar pages:
+
+```
+Dashboard
+My Inventory
+Store Orders
+Analytics
+Customers
+Notifications
+Store Profile
+Settings
+Logout
+```
+
+Each item must open its own page.
+
+---
+
+# 3. Dashboard Page
+
+Route:
+
+```
+/store/dashboard
+```
+
+Dashboard must show real-time store data.
+
+Cards:
+
+```
+Daily Sales
+Active Orders
+Low Stock Alerts
+Total Orders Today
+Total Revenue
+```
+
+Widgets:
+
+Recent Orders Table
+Sales Graph
+Inventory Alerts
+
+---
+
+# 4. My Inventory Page
+
+Route:
+
+```
+/store/inventory
+```
+
+Features:
+
+Add Medicine
+Edit Medicine
+Delete Medicine
+Update Stock
+Upload Medicine Image
+
+Fields:
+
+```
+Medicine Name
+Category
+Price
+Stock Quantity
+Expiry Date
+Manufacturer
+Prescription Required
+```
+
+Low stock warning must trigger automatically.
+
+---
+
+# 5. Store Orders Page
+
+Route:
+
+```
+/store/orders
+```
+
+Features:
+
+View all store orders
+Accept / Reject orders
+Update order status
+
+Order statuses:
+
+```
+Pending
+Accepted
+Preparing
+Out for Delivery
+Delivered
+Cancelled
+```
+
+Order table columns:
+
+```
+Order ID
+Customer Name
+Medicine List
+Order Total
+Payment Status
+Order Status
+Action Buttons
+```
+
+---
+
+# 6. Analytics Page
+
+Route:
+
+```
+/store/analytics
+```
+
+Charts to include:
+
+Daily Sales Chart
+Weekly Sales Chart
+Top Selling Medicines
+Revenue Growth
+
+Use charts such as:
+
+```
+Recharts
+Chart.js
+```
+
+---
+
+# 7. Customers Page
+
+Route:
+
+```
+/store/customers
+```
+
+Features:
+
+Customer list
+Order history
+Contact details
+
+Fields:
+
+```
+Customer Name
+Phone
+Orders Count
+Total Spending
+```
+
+---
+
+# 8. Notifications Page
+
+Route:
+
+```
+/store/notifications
+```
+
+Features:
+
+New order alerts
+Low stock alerts
+System updates
+
+Notifications must appear in the **top bell icon**.
+
+---
+
+# 9. Store Profile Page
+
+Route:
+
+```
+/store/profile
+```
+
+Editable store details:
+
+```
+Store Name
+Owner Name
+Store Address
+Contact Number
+Email
+Operating Hours
+Store License Upload
+```
+
+---
+
+# 10. Settings Page
+
+Route:
+
+```
+/store/settings
+```
+
+Features:
+
+Change password
+Notification settings
+Theme toggle (Dark / Light)
+
+---
+
+# 11. Logout System
+
+Logout button must:
+
+1. Clear authentication session
+2. Redirect to:
+
+```
+/store
+```
+
+---
+
+# 12. Real-Time Order Notifications
+
+When a new order arrives:
+
+Display popup notification:
+
+```
+New order received
+```
+
+Also show notification badge in the header bell icon.
+
+---
+
+# 13. Search Functionality
+
+Search bar in header must allow searching:
+
+```
+Orders
+Medicines
+Customers
+```
+
+---
+
+# 14. UI Requirements
+
+Interface must match Admin panel style but optimized for stores.
+
+Features required:
+
+Dark mode
+Light mode
+Responsive layout
+Smooth transitions
+Clean data tables
+
+---
+
+# 15. Technology Stack
+
+Recommended:
+
+Next.js
+Firebase Authentication
+Firestore Database
+Tailwind CSS
+Recharts / Chart.js
+
+---
+
+# 16. Folder Structure
+
+Example structure:
+
+```
+app
+ ├ store
+ │   ├ dashboard
+ │   ├ inventory
+ │   ├ orders
+ │   ├ analytics
+ │   ├ customers
+ │   ├ notifications
+ │   ├ profile
+ │   └ settings
+```
+
+---
+
+# Final Expected Result
+
+✔ Fully functional Store Dashboard
+✔ Working Inventory system
+✔ Order management system
+✔ Real-time notifications
+✔ Sales analytics
+✔ Secure authentication
+✔ Responsive UI
+
+---
+
+# Deliverables
+
+1. Working store dashboard
+2. Inventory management
+3. Order management
+4. Store analytics
+5. Customer management
+6. Notifications system
+7. Store profile management

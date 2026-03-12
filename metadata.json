@@ -1,0 +1,7 @@
+{
+  "name": "RapidRelief",
+  "description": "India’s fastest medicine delivery platform. Order medicines, upload prescriptions, and get emergency supplies in minutes. Powered by smart AI assistance.",
+  "requestFramePermissions": [
+    "geolocation"
+  ]
+}
