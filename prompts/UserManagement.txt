@@ -1,0 +1,397 @@
+# RapidRelief Admin Panel – User & Store Management System
+
+## Objective
+
+Upgrade the **User Management module** in the RapidRelief Admin Panel to make it fully functional with backend integration and professional UI.
+
+The system should allow the admin to manage:
+
+Users
+Stores
+User Roles
+Account status
+
+All actions must update the backend database automatically.
+
+---
+
+# 1. Sidebar Update
+
+Add a new sidebar item under **Users**.
+
+Sidebar structure:
+
+```
+Dashboard
+Inventory
+Orders
+Users
+Stores
+Settings
+Logout
+```
+
+The **Stores** item must include an icon.
+
+Example icon:
+
+```
+Store / Shop Icon
+```
+
+---
+
+# 2. Users Management Page
+
+Route:
+
+```
+/admin/users
+```
+
+This page should display all registered users.
+
+Each user card or row must contain:
+
+```
+User Avatar
+User Name
+Email
+Role
+Status
+Actions
+```
+
+Example roles:
+
+```
+Customer
+Store Owner
+Admin
+Delivery Partner
+```
+
+---
+
+# 3. Add User Feature
+
+Add button at the top right:
+
+```
++ Add User
+```
+
+Clicking this button opens a modal form.
+
+Fields:
+
+```
+Full Name
+Email
+Phone Number
+Password
+Role (Dropdown)
+Status (Active / Suspended)
+Profile Image Upload
+```
+
+After clicking **Create User**:
+
+```
+User saved in database
+User list updates automatically
+```
+
+---
+
+# 4. Edit User Feature
+
+Each user must have an **Edit icon**.
+
+```
+✏ Edit
+```
+
+Clicking edit should:
+
+1. Open edit modal
+2. Pre-fill user data.
+
+Editable fields:
+
+```
+Name
+Email
+Phone
+Role
+Status
+Profile Image
+```
+
+After saving:
+
+```
+Database updates
+User list refreshes
+```
+
+---
+
+# 5. Delete User Feature
+
+Each user row must have a delete button.
+
+```
+🗑 Delete
+```
+
+Clicking delete must show confirmation dialog:
+
+```
+Are you sure you want to delete this user?
+```
+
+Options:
+
+```
+Cancel
+Delete
+```
+
+After delete:
+
+```
+User removed from database
+UI updates instantly
+```
+
+---
+
+# 6. Search Users
+
+Add search bar at the top.
+
+Search fields:
+
+```
+Name
+Email
+Phone
+Role
+```
+
+Search results must update instantly.
+
+---
+
+# 7. Store Management Page
+
+Route:
+
+```
+/admin/stores
+```
+
+This page must allow admin to manage all stores on the platform.
+
+Store card or table fields:
+
+```
+Store Name
+Owner Name
+Email
+Phone
+Address
+Status
+Total Orders
+Actions
+```
+
+---
+
+# 8. Add Store Feature
+
+Add button:
+
+```
++ Add Store
+```
+
+Fields:
+
+```
+Store Name
+Owner Name
+Email
+Phone
+Address
+License Upload
+Password
+Store Status
+```
+
+After creation:
+
+```
+Store account created
+Store appears in store list
+Store login enabled
+```
+
+---
+
+# 9. Store Actions
+
+Each store must have:
+
+```
+Edit Store
+Suspend Store
+Delete Store
+View Store Details
+```
+
+Admin must be able to:
+
+```
+Enable / Disable store
+Reset store password
+View store analytics
+```
+
+---
+
+# 10. Store Details Page
+
+Route:
+
+```
+/admin/stores/[id]
+```
+
+Display:
+
+```
+Store profile
+Store inventory
+Orders from that store
+Revenue generated
+Customer ratings
+```
+
+---
+
+# 11. UI Requirements
+
+Design must match RapidRelief Admin Dashboard.
+
+Required features:
+
+```
+Dark mode
+Light mode
+Responsive layout
+Modern cards
+Smooth modals
+Clean tables
+```
+
+Use professional UI components.
+
+---
+
+# 12. Database Structure
+
+Example collections:
+
+```
+users
+stores
+orders
+```
+
+Users collection fields:
+
+```
+id
+name
+email
+phone
+role
+status
+profileImage
+createdAt
+```
+
+Stores collection fields:
+
+```
+storeId
+storeName
+ownerName
+email
+phone
+address
+license
+status
+createdAt
+```
+
+---
+
+# 13. Real-Time Updates
+
+Whenever admin performs actions:
+
+```
+Add User
+Edit User
+Delete User
+Add Store
+Edit Store
+Disable Store
+```
+
+The UI must update instantly without page refresh.
+
+---
+
+# 14. Technology Stack
+
+Recommended stack:
+
+```
+Next.js
+Firebase Firestore
+Firebase Authentication
+Tailwind CSS
+React Hooks
+```
+
+---
+
+# Final Expected Result
+
+The system must provide:
+
+```
+Full user management
+Full store management
+Add/Edit/Delete users
+Add/Edit/Delete stores
+Search users
+Search stores
+Role management
+Real-time updates
+Professional UI
+```
+
+---
+
+# Deliverables
+
+1. Fully functional Users Management
+2. Store Management System
+3. Backend database integration
+4. Real-time UI updates
+5. Admin full control system

@@ -1,5 +1,6 @@
 export interface Product {
   id: string;
+  storeId?: string; // ID of the store that owns this product
   name: string;
   category: string;
   price: number;
@@ -37,6 +38,7 @@ export enum OrderStatus {
 
 export interface Order {
   id: string;
+  storeId?: string; // ID of the store this order belongs to
   date: string;
   total: number;
   status: OrderStatus;
@@ -49,9 +51,18 @@ export interface User {
   name: string;
   email: string;
   phone: string;
-  role: 'admin' | 'user' | 'store';
+  role: 'admin' | 'user' | 'store' | 'delivery';
+  status: 'active' | 'suspended';
+  profileImage?: string;
   addresses: Address[];
   password?: string;
+  // Store specific fields
+  storeName?: string;
+  ownerName?: string;
+  license?: string;
+  totalOrders?: number;
+  revenue?: number;
+  rating?: number;
 }
 
 export interface Address {

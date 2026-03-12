@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useData } from '../context/DataContext';
 import { OrderStatus, Product } from '../types';
-import { Link, useNavigate, Routes, Route, useLocation, Navigate } from 'react-router-dom';
+import { Link, useNavigate, Routes, Route, useLocation, Navigate, useParams } from 'react-router-dom';
 import { 
   LayoutDashboard, 
   Package, 
@@ -27,14 +27,22 @@ import {
   Building2,
   FileText,
   PackageCheck,
-  UserCircle
+  UserCircle,
+  Store,
+  Eye,
+  ShieldCheck,
+  ShieldAlert,
+  MapPin,
+  Phone,
+  Mail,
+  Star
 } from 'lucide-react';
 import Button from '../components/Button';
 import { CATEGORIES } from '../constants';
 import ImageUpload from '../components/ImageUpload';
 
 const AdminPanel: React.FC = () => {
-  const { user, logout } = useAuth();
+  const { user, users, logout, deleteUser, updateUserAdmin, addUser } = useAuth();
   const { products, orders, updateOrderStatus, deleteProduct, addProduct, updateProduct, stats } = useData();
   const navigate = useNavigate();
   const location = useLocation();
@@ -59,6 +67,7 @@ const AdminPanel: React.FC = () => {
     if (path.includes('/admin/inventory')) return 'inventory';
     if (path.includes('/admin/orders')) return 'orders';
     if (path.includes('/admin/users')) return 'users';
+    if (path.includes('/admin/stores')) return 'stores';
     if (path.includes('/admin/settings')) return 'settings';
     if (path.includes('/admin/profile')) return 'profile';
     return 'dashboard';
@@ -88,6 +97,70 @@ const AdminPanel: React.FC = () => {
     expiryDate: ''
   };
   const [productForm, setProductForm] = useState(initialFormState);
+
+  // Store Form State
+  const initialStoreFormState = {
+    storeName: '',
+    ownerName: '',
+    email: '',
+    phone: '',
+    address: '',
+    license: '',
+    password: '',
+    status: 'active' as User['status']
+  };
+  const [storeForm, setStoreForm] = useState(initialStoreFormState);
+  const [isStoreModalOpen, setIsStoreModalOpen] = useState(false);
+  const [editingStore, setEditingStore] = useState<User | null>(null);
+
+  const openAddStoreModal = () => {
+    setEditingStore(null);
+    setStoreForm(initialStoreFormState);
+    setIsStoreModalOpen(true);
+  };
+
+  const openEditStoreModal = (store: User) => {
+    setEditingStore(store);
+    setStoreForm({
+      storeName: store.storeName || '',
+      ownerName: store.ownerName || '',
+      email: store.email,
+      phone: store.phone,
+      address: store.addresses?.[0]?.street || '',
+      license: store.license || '',
+      password: '',
+      status: store.status
+    });
+    setIsStoreModalOpen(true);
+  };
+
+  const handleStoreSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const finalStore = {
+      name: storeForm.storeName,
+      storeName: storeForm.storeName,
+      ownerName: storeForm.ownerName,
+      email: storeForm.email,
+      phone: storeForm.phone,
+      license: storeForm.license,
+      status: storeForm.status,
+      role: 'store' as User['role'],
+      addresses: [{ id: 'addr-' + Date.now(), type: 'Work', street: storeForm.address, city: '', zip: '' }]
+    };
+
+    if (editingStore) {
+      updateUserAdmin(editingStore.id, finalStore);
+    } else {
+      addUser({
+        ...finalStore,
+        password: storeForm.password,
+        totalOrders: 0,
+        revenue: 0,
+        rating: 5
+      });
+    }
+    setIsStoreModalOpen(false);
+  };
 
   const handleLogout = () => {
     logout();
@@ -146,6 +219,121 @@ const AdminPanel: React.FC = () => {
     (p.manufacturer && p.manufacturer.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
+  const StoreDetailsView = () => {
+    const { id } = useParams();
+    const store = users.find(u => u.id === id);
+
+    if (!store) return <Navigate to="/admin/stores" />;
+
+    const storeProducts = products.filter(p => p.storeId === store.id);
+    
+    return (
+      <div className="space-y-6 animate-fade-in">
+        <div className="flex items-center gap-4 mb-2">
+          <button 
+            onClick={() => navigate('/admin/stores')}
+            className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors text-slate-500"
+          >
+            <X size={20} />
+          </button>
+          <h3 className="text-2xl font-black text-slate-900 dark:text-white">Store Details: {store.storeName || store.name}</h3>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-1">
+            <div className="bg-white dark:bg-slate-900 rounded-[32px] border border-slate-100 dark:border-slate-800 p-8 shadow-sm">
+              <div className="flex flex-col items-center text-center mb-8">
+                <div className="w-28 h-24 bg-medical-50 dark:bg-medical-900/30 rounded-3xl flex items-center justify-center text-medical-500 mb-4 shadow-inner">
+                  <Store size={56} />
+                </div>
+                <h4 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">{store.storeName || store.name}</h4>
+                <span className={`mt-3 px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${
+                  store.status === 'active' 
+                    ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' 
+                    : 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
+                }`}>
+                  {store.status}
+                </span>
+              </div>
+
+              <div className="space-y-6 pt-6 border-t border-slate-50 dark:border-slate-800">
+                {[
+                  { label: 'Owner', val: store.ownerName, icon: UserCircle },
+                  { label: 'Email', val: store.email, icon: Mail },
+                  { label: 'Phone', val: store.phone, icon: Phone },
+                  { label: 'Address', val: store.addresses?.[0]?.street, icon: MapPin }
+                ].map((item, i) => (
+                  <div key={i} className="flex items-center gap-4">
+                    <div className="w-10 h-10 rounded-xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-400">
+                      <item.icon size={20} />
+                    </div>
+                    <div>
+                      <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest">{item.label}</p>
+                      <p className="font-bold text-slate-700 dark:text-slate-200">{item.val || 'N/A'}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className="lg:col-span-2 space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="bg-white dark:bg-slate-900 p-8 rounded-[32px] border border-slate-100 dark:border-slate-800 shadow-sm">
+                <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest mb-2">Total Revenue</p>
+                <p className="text-3xl font-black text-slate-900 dark:text-white tracking-tighter">₹{store.revenue?.toLocaleString() || 0}</p>
+              </div>
+              <div className="bg-white dark:bg-slate-900 p-8 rounded-[32px] border border-slate-100 dark:border-slate-800 shadow-sm">
+                <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest mb-2">Orders Fulfilled</p>
+                <p className="text-3xl font-black text-slate-900 dark:text-white tracking-tighter">{store.totalOrders || 0}</p>
+              </div>
+              <div className="bg-white dark:bg-slate-900 p-8 rounded-[32px] border border-slate-100 dark:border-slate-800 shadow-sm">
+                <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest mb-2">Customer Rating</p>
+                <div className="flex items-center gap-2">
+                  <p className="text-3xl font-black text-slate-900 dark:text-white tracking-tighter">{store.rating || 5.0}</p>
+                  <Star size={24} className="text-amber-400 fill-amber-400" />
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white dark:bg-slate-900 rounded-[32px] border border-slate-100 dark:border-slate-800 shadow-sm overflow-hidden">
+              <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/50 dark:bg-slate-800/50">
+                <h4 className="font-black text-xl text-slate-900 dark:text-white tracking-tight">Store Inventory ({storeProducts.length})</h4>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full text-left">
+                  <thead className="bg-slate-50 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 text-[10px] uppercase font-black">
+                    <tr>
+                      <th className="px-6 py-4">Item</th>
+                      <th className="px-6 py-4">Category</th>
+                      <th className="px-6 py-4 text-right">Stock</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                    {storeProducts.map(p => (
+                      <tr key={p.id} className="text-sm hover:bg-slate-50 dark:hover:bg-slate-800/30">
+                        <td className="px-6 py-4 font-bold text-slate-700 dark:text-slate-200">{p.name}</td>
+                        <td className="px-6 py-4 text-slate-500">{p.category}</td>
+                        <td className="px-6 py-4 font-black text-right">{p.stock}</td>
+                      </tr>
+                    ))}
+                    {storeProducts.length === 0 && (
+                      <tr>
+                        <td colSpan={3} className="px-6 py-12 text-center text-slate-400 font-medium">
+                          No inventory data for this store.
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   // --- SUB-COMPONENTS ---
 
   const SidebarItem = ({ icon: Icon, label, id, path }: { icon: any, label: string, id: string, path: string }) => (
@@ -177,12 +365,18 @@ const AdminPanel: React.FC = () => {
           </Link>
         </div>
 
-        <nav className="flex-grow px-4 space-y-2">
+        <nav className="flex-grow px-4 space-y-1">
+          <p className="px-4 text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 mt-4">Main</p>
           <SidebarItem icon={LayoutDashboard} label="Dashboard" id="dashboard" path="/admin/dashboard" />
           <SidebarItem icon={Package} label="Inventory" id="inventory" path="/admin/inventory" />
           <SidebarItem icon={ShoppingCart} label="Orders" id="orders" path="/admin/orders" />
+          
+          <p className="px-4 text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 mt-6">Management</p>
           <SidebarItem icon={Users} label="Users" id="users" path="/admin/users" />
-          <SidebarItem icon={UserCircle} label="Admin Profile" id="profile" path="/admin/profile" />
+          <SidebarItem icon={Store} label="Stores" id="stores" path="/admin/stores" />
+          
+          <p className="px-4 text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 mt-6">System</p>
+          <SidebarItem icon={UserCircle} label="Profile" id="profile" path="/admin/profile" />
           <SidebarItem icon={Settings} label="Settings" id="settings" path="/admin/settings" />
         </nav>
 
@@ -511,6 +705,96 @@ const AdminPanel: React.FC = () => {
               </div>
             } />
 
+            <Route path="/stores" element={
+              <div className="space-y-6">
+                <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+                  <div className="relative w-full md:w-96">
+                     <input 
+                       type="text" 
+                       placeholder="Search stores..."
+                       value={searchTerm}
+                       onChange={(e) => setSearchTerm(e.target.value)}
+                       className="w-full pl-10 pr-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-medical-500 font-medium"
+                     />
+                     <Search className="absolute left-3 top-2.5 text-slate-400" size={18} />
+                  </div>
+                  <Button onClick={openAddStoreModal} className="w-full md:w-auto flex items-center gap-2">
+                    <Plus size={18} /> Add Store
+                  </Button>
+                </div>
+
+                <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left">
+                      <thead className="bg-slate-50 dark:bg-slate-900/50 text-slate-500 dark:text-slate-400 text-xs uppercase font-semibold">
+                        <tr>
+                          <th className="px-6 py-4">Store Name</th>
+                          <th className="px-6 py-4 text-center">Orders</th>
+                          <th className="px-6 py-4">Status</th>
+                          <th className="px-6 py-4 text-right">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
+                        {users.filter(u => u.role === 'store' && (u.storeName || u.name).toLowerCase().includes(searchTerm.toLowerCase())).map((store) => (
+                          <tr key={store.id} className="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
+                            <td className="px-6 py-4">
+                              <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 rounded-xl bg-medical-500 text-white flex items-center justify-center shadow-lg">
+                                  <Store size={20} />
+                                </div>
+                                <div>
+                                  <Link to={`/admin/stores/${store.id}`} className="font-bold text-slate-900 dark:text-slate-200 hover:text-medical-500 transition-colors">
+                                    {store.storeName || store.name}
+                                  </Link>
+                                  <p className="text-[10px] text-slate-400 uppercase font-bold mt-0.5">{store.email}</p>
+                                </div>
+                              </div>
+                            </td>
+                            <td className="px-6 py-4 text-center text-slate-900 dark:text-slate-200 font-medium">
+                              {store.totalOrders || 0}
+                            </td>
+                            <td className="px-6 py-4">
+                              <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-black uppercase ${
+                                store.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+                              }`}>
+                                {store.status}
+                              </span>
+                            </td>
+                            <td className="px-6 py-4 text-right">
+                              <div className="flex items-center justify-end gap-2">
+                                <Link to={`/admin/stores/${store.id}`} className="p-2 text-slate-400 hover:text-medical-500 hover:bg-medical-50 dark:hover:bg-medical-900/20 rounded-lg transition-colors">
+                                  <Eye size={16}/>
+                                </Link>
+                                <button onClick={() => openEditStoreModal(store)} className="p-2 text-slate-400 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors">
+                                  <Edit2 size={16} />
+                                </button>
+                                <button onClick={() => {
+                                  if(confirm('Are you sure you want to delete this store?')) {
+                                    deleteUser(store.id);
+                                  }
+                                }} className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors">
+                                  <Trash2 size={16} />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                        {users.filter(u => u.role === 'store').length === 0 && (
+                          <tr>
+                            <td colSpan={4} className="px-6 py-12 text-center text-slate-500">
+                              No stores found.
+                            </td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            } />
+
+            <Route path="/stores/:id" element={<StoreDetailsView />} />
+
             <Route path="/profile" element={
               <div className="max-w-4xl mx-auto animate-fade-in">
                 <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm overflow-hidden">
@@ -748,6 +1032,141 @@ const AdminPanel: React.FC = () => {
               <Button type="button" variant="outline" onClick={() => setIsProductModalOpen(false)}>Cancel</Button>
               <Button type="submit" form="productForm" className="flex items-center gap-2 px-8 shadow-xl shadow-medical-500/20">
                 <Save size={18} /> {editingProduct ? 'Update Product' : 'Add Product'}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Add/Edit Store Modal */}
+      {isStoreModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm animate-fade-in">
+          <div className="bg-white dark:bg-slate-900 w-full max-w-2xl rounded-3xl shadow-2xl overflow-hidden animate-fade-in-up flex flex-col max-h-[90vh] border border-slate-100 dark:border-slate-800">
+            <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/50 dark:bg-slate-800/50">
+              <h3 className="font-black text-xl text-slate-900 dark:text-white tracking-tight flex items-center gap-2">
+                {editingStore ? <Edit2 size={24} className="text-medical-500"/> : <Plus size={24} className="text-medical-500"/>}
+                {editingStore ? 'Edit Store Details' : 'Add New Store'}
+              </h3>
+              <button onClick={() => setIsStoreModalOpen(false)} className="p-2 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-full transition-colors">
+                <X size={20} className="text-slate-500 dark:text-slate-400" />
+              </button>
+            </div>
+            
+            <div className="p-6 overflow-y-auto custom-scrollbar">
+              <form id="storeForm" onSubmit={handleStoreSubmit} className="space-y-8">
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-5">
+                    <h4 className="text-sm font-black text-medical-600 dark:text-medical-400 uppercase tracking-widest flex items-center gap-2 border-b border-slate-100 dark:border-slate-800 pb-2">
+                      <Store size={16}/> Business Info
+                    </h4>
+                    
+                    <div>
+                      <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Store Name</label>
+                      <input 
+                        type="text" 
+                        required
+                        value={storeForm.storeName}
+                        onChange={(e) => setStoreForm({...storeForm, storeName: e.target.value})}
+                        className="w-full px-4 py-3 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-medical-500/20 focus:border-medical-500 dark:bg-slate-800 dark:text-white font-medium"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Owner Name</label>
+                      <input 
+                        type="text" 
+                        required
+                        value={storeForm.ownerName}
+                        onChange={(e) => setStoreForm({...storeForm, ownerName: e.target.value})}
+                        className="w-full px-4 py-3 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-medical-500/20 focus:border-medical-500 dark:bg-slate-800 dark:text-white font-medium"
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">License Number</label>
+                      <input 
+                        type="text" 
+                        value={storeForm.license}
+                        onChange={(e) => setStoreForm({...storeForm, license: e.target.value})}
+                        className="w-full px-4 py-3 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-medical-500/20 focus:border-medical-500 dark:bg-slate-800 dark:text-white font-medium"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-5">
+                    <h4 className="text-sm font-black text-medical-600 dark:text-medical-400 uppercase tracking-widest flex items-center gap-2 border-b border-slate-100 dark:border-slate-800 pb-2">
+                      <Phone size={16}/> Contact & Access
+                    </h4>
+
+                    <div>
+                      <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Email Address</label>
+                      <input 
+                        type="email" 
+                        required
+                        value={storeForm.email}
+                        onChange={(e) => setStoreForm({...storeForm, email: e.target.value})}
+                        className="w-full px-4 py-3 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-medical-500/20 focus:border-medical-500 dark:bg-slate-800 dark:text-white font-medium"
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Phone</label>
+                      <input 
+                        type="text" 
+                        required
+                        value={storeForm.phone}
+                        onChange={(e) => setStoreForm({...storeForm, phone: e.target.value})}
+                        className="w-full px-4 py-3 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-medical-500/20 focus:border-medical-500 dark:bg-slate-800 dark:text-white font-medium"
+                      />
+                    </div>
+
+                    {!editingStore && (
+                      <div>
+                        <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Temporary Password</label>
+                        <input 
+                          type="password" 
+                          required
+                          value={storeForm.password}
+                          onChange={(e) => setStoreForm({...storeForm, password: e.target.value})}
+                          className="w-full px-4 py-3 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-medical-500/20 focus:border-medical-500 dark:bg-slate-800 dark:text-white font-medium"
+                        />
+                      </div>
+                    )}
+                  </div>
+                  
+                  <div className="md:col-span-2 space-y-5">
+                    <div>
+                      <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Full Address</label>
+                      <textarea 
+                        rows={2}
+                        value={storeForm.address}
+                        onChange={(e) => setStoreForm({...storeForm, address: e.target.value})}
+                        className="w-full px-4 py-3 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-medical-500 dark:bg-slate-800 dark:text-white font-medium resize-none"
+                      ></textarea>
+                    </div>
+                    
+                    <div>
+                      <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Store Status</label>
+                      <select 
+                        value={storeForm.status}
+                        onChange={(e) => setStoreForm({...storeForm, status: e.target.value as any})}
+                        className="w-full px-4 py-3 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-medical-500 dark:bg-slate-800 dark:text-white font-medium cursor-pointer"
+                      >
+                        <option value="active">Active</option>
+                        <option value="suspended">Suspended</option>
+                      </select>
+                    </div>
+                  </div>
+
+                </div>
+              </form>
+            </div>
+
+            <div className="p-6 border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 flex justify-end gap-3 rounded-b-3xl">
+              <Button type="button" variant="outline" onClick={() => setIsStoreModalOpen(false)}>Cancel</Button>
+              <Button type="submit" form="storeForm" className="flex items-center gap-2 px-8 shadow-xl shadow-medical-500/20">
+                <Save size={18} /> {editingStore ? 'Update Store' : 'Add Store'}
               </Button>
             </div>
           </div>

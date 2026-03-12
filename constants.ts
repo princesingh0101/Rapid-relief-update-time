@@ -13,6 +13,7 @@ export const CATEGORIES: Category[] = [
 export const PRODUCTS: Product[] = [
   {
     id: '1',
+    storeId: 'store-1',
     name: 'Paracetamol 650mg',
     category: 'Tablets',
     price: 30,
@@ -30,6 +31,7 @@ export const PRODUCTS: Product[] = [
   },
   {
     id: '2',
+    storeId: 'store-1',
     name: 'Cough Syrup Advanced',
     category: 'Syrups',
     price: 120,
@@ -47,6 +49,7 @@ export const PRODUCTS: Product[] = [
   },
   {
     id: '3',
+    storeId: 'store-1',
     name: 'Digital Thermometer',
     category: 'Devices',
     price: 250,
@@ -64,6 +67,7 @@ export const PRODUCTS: Product[] = [
   },
   {
     id: '4',
+    storeId: 'store-1',
     name: 'Amoxicillin 500mg',
     category: 'Tablets',
     price: 85,
@@ -80,6 +84,7 @@ export const PRODUCTS: Product[] = [
   },
   {
     id: '5',
+    storeId: 'store-1',
     name: 'Bandage Roll (Large)',
     category: 'First Aid',
     price: 40,
@@ -96,6 +101,7 @@ export const PRODUCTS: Product[] = [
   },
   {
     id: '6',
+    storeId: 'store-1',
     name: 'Vitamin C Serum',
     category: 'Personal',
     price: 499,
@@ -113,6 +119,7 @@ export const PRODUCTS: Product[] = [
   },
     {
     id: '7',
+    storeId: 'store-1',
     name: 'Baby Diapers (Pack of 10)',
     category: 'Baby Care',
     price: 299,
@@ -129,6 +136,7 @@ export const PRODUCTS: Product[] = [
   },
   {
     id: '8',
+    storeId: 'store-1',
     name: 'Emergency Inhaler',
     category: 'Tablets',
     price: 450,
@@ -148,6 +156,7 @@ export const PRODUCTS: Product[] = [
 export const MOCK_ORDERS: Order[] = [
   {
     id: '#ORD-2023-001',
+    storeId: 'store-1',
     date: '2023-10-24',
     total: 350,
     status: OrderStatus.DELIVERED,
@@ -156,6 +165,7 @@ export const MOCK_ORDERS: Order[] = [
   },
   {
     id: '#ORD-2023-002',
+    storeId: 'store-1',
     date: '2023-10-26',
     total: 120,
     status: OrderStatus.OUT_FOR_DELIVERY,

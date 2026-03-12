@@ -3,6 +3,7 @@ import { User, Address } from '../types';
 
 interface AuthContextType {
   user: User | null;
+  users: User[];
   loading: boolean;
   login: (email: string, password?: string) => Promise<boolean>;
   signup: (name: string, email: string, phone: string, password?: string) => Promise<boolean>;
@@ -10,6 +11,9 @@ interface AuthContextType {
   updateProfile: (data: Partial<User>) => void;
   addAddress: (address: Omit<Address, 'id'>) => void;
   removeAddress: (id: string) => void;
+  addUser: (userData: Omit<User, 'id'>) => void;
+  updateUserAdmin: (id: string, updates: Partial<User>) => void;
+  deleteUser: (id: string) => void;
   isAuthenticated: boolean;
   isAdmin: boolean;
   isStore: boolean;
@@ -23,6 +27,7 @@ const MOCK_ADMIN: User = {
   email: 'admin@rapidrelief.com',
   phone: '9999999999',
   role: 'admin',
+  status: 'active',
   addresses: [],
   password: 'Prince@123'
 };
@@ -30,9 +35,12 @@ const MOCK_ADMIN: User = {
 const MOCK_STORE: User = {
   id: 'store-1',
   name: 'HealthPlus Pharmacy',
+  storeName: 'HealthPlus Pharmacy',
+  ownerName: 'Admin User',
   email: 'store@rapidrelief.com',
   phone: '8888888888',
   role: 'store',
+  status: 'active',
   addresses: [
     {
       id: 'addr-store-1',
@@ -42,7 +50,10 @@ const MOCK_STORE: User = {
       zip: '560001'
     }
   ],
-  password: 'Store@123'
+  password: 'Store@123',
+  totalOrders: 156,
+  revenue: 45800,
+  rating: 4.8
 };
 
 const MOCK_USER: User = {
@@ -51,6 +62,7 @@ const MOCK_USER: User = {
   email: 'john.doe@example.com',
   phone: '9876543210',
   role: 'user',
+  status: 'active',
   addresses: [
     {
       id: 'addr-1',
@@ -81,7 +93,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       if (storeIdx === -1) {
         currentUsers.push(MOCK_STORE);
       } else if (currentUsers[storeIdx].password !== MOCK_STORE.password) {
-        currentUsers[storeIdx] = MOCK_STORE;
+        currentUsers[storeIdx] = { ...currentUsers[storeIdx], ...MOCK_STORE };
       }
 
       // Ensure MOCK_ADMIN is also up to date
@@ -89,7 +101,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       if (adminIdx === -1) {
         currentUsers.push(MOCK_ADMIN);
       } else if (currentUsers[adminIdx].password !== MOCK_ADMIN.password) {
-        currentUsers[adminIdx] = MOCK_ADMIN;
+        currentUsers[adminIdx] = { ...currentUsers[adminIdx], ...MOCK_ADMIN };
       }
 
       setUsers(currentUsers);
@@ -119,13 +131,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   }, []);
 
   const login = async (email: string, password?: string): Promise<boolean> => {
-    // Search in our users list
     const foundUser = users.find(u => u.email === email);
     
     if (foundUser) {
-      // Password comparison (simple string comparison for mock)
       if (password && foundUser.password && foundUser.password !== password) {
-         // Special master password for admin if needed, but let's stick to credentials
          return false;
       }
       
@@ -146,6 +155,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       email,
       phone,
       role: 'user',
+      status: 'active',
       addresses: [],
       password
     };
@@ -175,6 +185,36 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     localStorage.setItem('rapid_users', JSON.stringify(updatedUsers));
   };
 
+  // Admin User Management
+  const addUser = (userData: Omit<User, 'id'>) => {
+    const newUser: User = {
+      ...userData,
+      id: Date.now().toString()
+    };
+    const updatedUsers = [...users, newUser];
+    setUsers(updatedUsers);
+    localStorage.setItem('rapid_users', JSON.stringify(updatedUsers));
+  };
+
+  const updateUserAdmin = (id: string, updates: Partial<User>) => {
+    const updatedUsers = users.map(u => u.id === id ? { ...u, ...updates } : u);
+    setUsers(updatedUsers);
+    localStorage.setItem('rapid_users', JSON.stringify(updatedUsers));
+    
+    // If the updated user is the currently logged in user, update session too
+    if (user && user.id === id) {
+      const updatedUser = { ...user, ...updates };
+      setUser(updatedUser);
+      localStorage.setItem('rapid_session', JSON.stringify(updatedUser));
+    }
+  };
+
+  const deleteUser = (id: string) => {
+    const updatedUsers = users.filter(u => u.id !== id);
+    setUsers(updatedUsers);
+    localStorage.setItem('rapid_users', JSON.stringify(updatedUsers));
+  };
+
   const addAddress = (addressData: Omit<Address, 'id'>) => {
     if (!user) return;
     const newAddress: Address = { ...addressData, id: Date.now().toString() };
@@ -191,6 +231,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   return (
     <AuthContext.Provider value={{ 
       user, 
+      users,
       loading,
       login, 
       signup,
@@ -198,6 +239,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       updateProfile,
       addAddress,
       removeAddress,
+      addUser,
+      updateUserAdmin,
+      deleteUser,
       isAuthenticated: !!user,
       isAdmin: user?.role === 'admin',
       isStore: user?.role === 'store'
